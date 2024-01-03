@@ -1,0 +1,461 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Demo app for observability with golang">
+      
+      
+        <meta name="author" content="Matt Vinall">
+      
+      
+        <link rel="canonical" href="https://boyvinall.github.io/observability-demo/">
+      
+      
+      
+        <link rel="next" href="logging/">
+      
+      
+      <link rel="icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.3">
+    
+    
+      
+        <title>Grafana/Golang Observability</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.50c56a3b.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="css/extra.css">
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#introduction" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="Grafana/Golang Observability" class="md-header__button md-logo" aria-label="Grafana/Golang Observability" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Grafana/Golang Observability
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Introduction
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/boyvinall/observability-demo" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="Grafana/Golang Observability" class="md-nav__button md-logo" aria-label="Grafana/Golang Observability" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Grafana/Golang Observability
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/boyvinall/observability-demo" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="." class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Introduction
+  </span>
+  
+
+      </a>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="logging/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Logging
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tracing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tracing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="about-docs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    About these docs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h1>
+<p>This site shows how to create a Go app that has logs, metrics and traces visible in Grafana.  The Grafana datasources are configured to
+ensure a seamless click-through experience between each of these signals.  The implementation of metrics and traces within the app makes use
+of <a href="https://pkg.go.dev/go.opentelemetry.io/otel">OpenTelemetry-Go</a>, and logging uses the <a href="https://pkg.go.dev/log/slog">log/slog</a> package
+that was <a href="https://go.dev/blog/slog">introduced</a> in Go 1.21.</p>
+<p>The site is backed by a <a href="https://github.com/boyvinall/observability-demo">fully-working demo</a>, so you can easily run it up and explore how
+to navigate around.  This also means you have a complete reference for how to implement things yourself – many other examples online exist
+only as small fragments, often requiring you to read a bunch of other docs before you have enough to get that <em>*!&amp;$@%</em> thing working.</p>
+<p>The demo consists of:</p>
+<ul>
+<li>Some application components:<ul>
+<li>GRPC server</li>
+<li>worker service which receives messages from the GRPC server over <a href="https://nats.io/">NATS</a></li>
+<li>command-line app to post requests to the GRPC server</li>
+</ul>
+</li>
+<li>Various infra services:<ul>
+<li>Grafana – including provisioned datasources and dashboards</li>
+<li>Loki/Promtail</li>
+<li>Tempo</li>
+<li>Prometheus</li>
+<li>NATS</li>
+</ul>
+</li>
+</ul>
+<p>The request flow between the different application components is super simple:</p>
+<p><center>
+<img src="data:image/png;base64,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" class="uml" alt="uml diagram" title="" />
+</center></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": ".", "features": ["toc.follow", "content.code.copy"], "search": "assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="assets/javascripts/bundle.d7c377c4.min.js"></script>
+      
+    
+  </body>
+</html>
